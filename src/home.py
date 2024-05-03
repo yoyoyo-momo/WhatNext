@@ -1,5 +1,5 @@
 import streamlit as st
-
+from recommendations import song_recommendations, playlist_recommendations
 
 def home():
     st.title('WHATNEXT')
@@ -31,9 +31,9 @@ def home():
     
 
     st.subheader(':notes: **Playlist Recommendation**')
-    st.text_input('Enter your Playlist URL here:')
-    st.button('Get Playlist Recommendations')
+    st.session_state.playlist_url =  st.text_input('Enter your Playlist URL here:')
+    st.button('Get Playlist Recommendations', on_click=playlist_recommendations)
 
     st.subheader(':musical_score: **Song Recommendation**')
-    st.text_input('Enter your Song URL here:')
-    st.button('Get Song Recommendations')
+    st.session_state.song_url = st.text_input('Enter your Song URL here:')
+    st.button('Get Song Recommendations', on_click=song_recommendations)
