@@ -1,8 +1,7 @@
 import streamlit as st
 from streamlit_option_menu import option_menu
 from home import home
-
-st.title('WHATNEXT')
+from about import about
 
 
 # left_column, right_column = st.columns(2)
@@ -27,6 +26,8 @@ def main():
     menu()
     if st.session_state.page == "Home":
         home()
+    elif st.session_state.page == "About":
+        about()
 
 if __name__ == "__main__":
     main()
