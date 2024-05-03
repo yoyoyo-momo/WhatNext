@@ -318,59 +318,6 @@ def playlist_model(url, model, max_gen=3, same_art=5):
 
     return Fresult, log
 
-
-def generate_trading_report(message):
-    load_dotenv()
-    openai_api_secret = os.getenv("OPENAI_API_SECRET")
-    openai.api_key = openai_api_secret
-    template = """
-    Based on the provided financial data, here's today's trading report for the investor:
-
-    Today's Trading Report
-    Unrealized Profit and Loss (PnL) Details:
-
-    Stock 1220: Shows a decline with an unrealized PnL of -$22,652, which is -2.31% of its net worth.
-    Stock 2472: Experienced a significant drop, losing -$56,140, which is -6.22% of its net worth.
-    Stock 6206: Minor decline with an unrealized PnL of -$12,387, equating to -1.67%.
-    Stock 6261: On a positive note, this stock gained $33,612, about 3.76% of its net worth.
-    Stock 8182: Also faced a heavy loss of -$62,302, marking -6.6% of its net worth.
-    Stock 2109: Slightly positive with a gain of $497, which is 0.29%.
-    Stock 2441: Similar to 8182, facing a loss of -$63,034, which is -6.58%.
-    Stock 5356: Performed well with a gain of $40,420, or 4.56%.
-    Stock 8150: Decreased by -$33,438, equating to -3.74%.
-    Stock 1582: Dropped by -$35,129, or -3.9%.
-    Total Unrealized PnL: -$210,553.
-    Realized Profit and Loss (PnL) Details:
-
-    Stock 6239: Had a significant realized loss of -$105,128, constituting -11.02% of its value.
-    Total Realized PnL: -$105,128.
-    Overall Financial Performance:
-
-    Total PnL: -$315,681.
-    Return on Investment (ROI) of Algorithm: -3.42%.
-    ROI of All Funds: -3.48%.
-    Remaining Cash: $1,007,206.
-    Net Worth: $9,066,233.
-
-    Summary
-    Today's trading reflected a challenging market environment with significant losses in several stocks. Although some gains were noted, the overall financial performance resulted in a negative ROI for both the algorithm and the overall funds. Moving forward, a reassessment of the current investment strategy and risk management practices might be necessary to mitigate further losses and enhance returns.
-    """
-
-    prompt = f"Here is the template {template}, Please generate today\'s trading report for the investor on the data: {message}"
-
-    completion = openai.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {
-                "role": "user",
-                "content": prompt,
-            },
-        ],
-    )
-    print(completion.choices[0].message.content)
-    return completion.choices[0].message.content
-
-
 def top_tracks(url, region):
     log = []
     Fresult = []
@@ -624,6 +571,65 @@ def update_dataset():
     df.to_csv('Data/streamlit.csv', index=False)
     return (len(df) - cur)
 
+def generate_song_from_prompt(message):
+    load_dotenv()
+    openai_api_secret = os.getenv("OPENAI_API_SECRET")
+    openai.api_key = openai_api_secret
+    template = """
+    Based on the provided financial data, here's today's trading report for the investor:
+
+    Today's Trading Report
+    Unrealized Profit and Loss (PnL) Details:
+
+    Stock 1220: Shows a decline with an unrealized PnL of -$22,652, which is -2.31% of its net worth.
+    Stock 2472: Experienced a significant drop, losing -$56,140, which is -6.22% of its net worth.
+    Stock 6206: Minor decline with an unrealized PnL of -$12,387, equating to -1.67%.
+    Stock 6261: On a positive note, this stock gained $33,612, about 3.76% of its net worth.
+    Stock 8182: Also faced a heavy loss of -$62,302, marking -6.6% of its net worth.
+    Stock 2109: Slightly positive with a gain of $497, which is 0.29%.
+    Stock 2441: Similar to 8182, facing a loss of -$63,034, which is -6.58%.
+    Stock 5356: Performed well with a gain of $40,420, or 4.56%.
+    Stock 8150: Decreased by -$33,438, equating to -3.74%.
+    Stock 1582: Dropped by -$35,129, or -3.9%.
+    Total Unrealized PnL: -$210,553.
+    Realized Profit and Loss (PnL) Details:
+
+    Stock 6239: Had a significant realized loss of -$105,128, constituting -11.02% of its value.
+    Total Realized PnL: -$105,128.
+    Overall Financial Performance:
+
+    Total PnL: -$315,681.
+    Return on Investment (ROI) of Algorithm: -3.42%.
+    ROI of All Funds: -3.48%.
+    Remaining Cash: $1,007,206.
+    Net Worth: $9,066,233.
+
+    Summary
+    Today's trading reflected a challenging market environment with significant losses in several stocks. Although some gains were noted, the overall financial performance resulted in a negative ROI for both the algorithm and the overall funds. Moving forward, a reassessment of the current investment strategy and risk management practices might be necessary to mitigate further losses and enhance returns.
+    """
+
+    prompt = f"Here is the template {template}, Please generate today\'s trading report for the investor on the data: {message}"
+
+    completion = openai.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {
+                "role": "user",
+                "content": prompt,
+            },
+        ],
+    )
+    print(completion.choices[0].message.content)
+    return completion.choices[0].message.content
+
 
 if __name__ == '__main__':
-    song_model(url="https://open.spotify.com/track/4JHg4nNYUJQ5HULcCmI18R?si=2379b70cee0d4923", model="Model 1")
+    stream = open("Spotify/Spotify.yaml")
+    spotify_details = yaml.safe_load(stream)
+    auth_manager = SpotifyClientCredentials(client_id=spotify_details['Client_id'],
+                                            client_secret=spotify_details['client_secret'])
+    sp = spotipy.client.Spotify(auth_manager=auth_manager)
+    # search_message = generate_song_from_prompt()
+    result = sp.search("Mayday - OAOA")["tracks"]["items"][0]["uri"].split(':')[2]
+    song_model(url="https://open.spotify.com/track/" + result, model="Model 1")
+
