@@ -17,10 +17,10 @@ def home():
     with open('data.json', 'w') as file:
         json.dump(data, file)    
 
-    st.subheader('3. Playlist Recommendation')
+    st.subheader(':notes: **Playlist Recommendation**')
     st.text_input('Enter your Playlist URL here:')
-    st.button('Get playlist Recommendations')
+    st.button('Get Playlist Recommendations')
 
-    st.subheader('4. Song Recommendation')
+    st.subheader(':musical_score: **Song Recommendation**')
     st.text_input('Enter your Song URL here:')
-    st.button('Get song Recommendations')
+    st.button('Get Song Recommendations')

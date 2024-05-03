@@ -1,9 +1,10 @@
-# Streamlit
+# WHATNEXT
+WHATNEXT is a system that use LLM and IR techniques to recommends playlists to users.
 
 
 ## Dataset download
 The dataset can be download in [here](https://www.aicrowd.com/challenges/spotify-million-playlist-dataset-challenge/dataset_files).
-After download the dataset, move the ```spotify_million_playlist_dataset``` and ```spotify_million_playlist_dataset_challenge``` under ````dset``` folder. Please create one if did not exist.
+After download the dataset, move the ```spotify_million_playlist_dataset``` and ```spotify_million_playlist_dataset_challenge``` under ```dset``` folder. Please create one if did not exist.
 
 ## Envornment Setup
 ```
