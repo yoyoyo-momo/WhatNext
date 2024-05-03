@@ -1,16 +1,20 @@
 import os
 import pickle
 import re
-
 import pandas as pd
 import spotipy
 import streamlit as st
-import yaml
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from spotipy.oauth2 import SpotifyClientCredentials
 from dotenv import load_dotenv
 import openai
+
+load_dotenv()
+openai_api_secret = os.getenv("OPENAI_API_SECRET")
+client_id = os.getenv("CLIENT_ID")
+client_secret = os.getenv("CLIENT_SECRET")
+
 
 
 def playlist_model(url, model, max_gen=3, same_art=5):
@@ -19,23 +23,9 @@ def playlist_model(url, model, max_gen=3, same_art=5):
     try:
         log.append('Start logging')
         uri = url.split('/')[-1].split('?')[0]
-        try:
-            log.append('spotify local method')
-            stream = open("Spotify/Spotify.yaml")
-            spotify_details = yaml.safe_load(stream)
-            auth_manager = SpotifyClientCredentials(client_id=spotify_details['Client_id'],
-                                                    client_secret=spotify_details['client_secret'])
-        except:
-            log.append('spotify .streamlit method')
-            try:
-                Client_id = st.secrets["Client_ID"]
-                client_secret = st.secrets["Client_secret"]
-                auth_manager = SpotifyClientCredentials(client_id=Client_id, client_secret=client_secret)
-            except:
-                log.append('spotify hug method')
-                Client_id = os.environ['Client_ID']
-                client_secret = os.environ['Client_secret']
-                auth_manager = SpotifyClientCredentials(client_id=Client_id, client_secret=client_secret)
+        log.append('spotify local method')
+        auth_manager = SpotifyClientCredentials(client_id=client_id,
+                                                client_secret=client_secret)
         sp = spotipy.client.Spotify(auth_manager=auth_manager)
 
         # directly use spotify recommendation model
@@ -322,23 +312,8 @@ def top_tracks(url, region):
     log = []
     Fresult = []
     uri = url.split('/')[-1].split('?')[0]
-    try:
-        log.append('spotify local method')
-        stream = open("Spotify/Spotify.yaml")
-        spotify_details = yaml.safe_load(stream)
-        auth_manager = SpotifyClientCredentials(client_id=spotify_details['Client_id'],
-                                                client_secret=spotify_details['client_secret'])
-    except:
-        log.append('spotify .streamlit method')
-        try:
-            Client_id = st.secrets["Client_ID"]
-            client_secret = st.secrets["Client_secret"]
-            auth_manager = SpotifyClientCredentials(client_id=Client_id, client_secret=client_secret)
-        except:
-            log.append('spotify hug method')
-            Client_id = os.environ['Client_ID']
-            client_secret = os.environ['Client_secret']
-            auth_manager = SpotifyClientCredentials(client_id=Client_id, client_secret=client_secret)
+    auth_manager = SpotifyClientCredentials(client_id=client_id,
+                                            client_secret=client_secret)
     sp = spotipy.client.Spotify(auth_manager=auth_manager)
     try:
         log.append('Starting Spotify Model')
@@ -358,23 +333,8 @@ def song_model(url, model, max_gen=3, same_art=5):
     try:
         log.append('Start logging')
         uri = url.split('/')[-1].split('?')[0]
-        try:
-            log.append('spotify local method')
-            stream = open("Spotify/Spotify.yaml")
-            spotify_details = yaml.safe_load(stream)
-            auth_manager = SpotifyClientCredentials(client_id=spotify_details['Client_id'],
-                                                    client_secret=spotify_details['client_secret'])
-        except:
-            log.append('spotify .streamlit method')
-            try:
-                Client_id = st.secrets["Client_ID"]
-                client_secret = st.secrets["Client_secret"]
-                auth_manager = SpotifyClientCredentials(client_id=Client_id, client_secret=client_secret)
-            except:
-                log.append('spotify hug method')
-                Client_id = os.environ['Client_ID']
-                client_secret = os.environ['Client_secret']
-                auth_manager = SpotifyClientCredentials(client_id=Client_id, client_secret=client_secret)
+        auth_manager = SpotifyClientCredentials(client_id=client_id,
+                                                client_secret=client_secret)
         sp = spotipy.client.Spotify(auth_manager=auth_manager)
 
         if model == 'Spotify Model':
@@ -572,40 +532,9 @@ def update_dataset():
     return (len(df) - cur)
 
 def generate_song_from_prompt(message):
-    load_dotenv()
-    openai_api_secret = os.getenv("OPENAI_API_SECRET")
     openai.api_key = openai_api_secret
     template = """
-    Based on the provided financial data, here's today's trading report for the investor:
 
-    Today's Trading Report
-    Unrealized Profit and Loss (PnL) Details:
-
-    Stock 1220: Shows a decline with an unrealized PnL of -$22,652, which is -2.31% of its net worth.
-    Stock 2472: Experienced a significant drop, losing -$56,140, which is -6.22% of its net worth.
-    Stock 6206: Minor decline with an unrealized PnL of -$12,387, equating to -1.67%.
-    Stock 6261: On a positive note, this stock gained $33,612, about 3.76% of its net worth.
-    Stock 8182: Also faced a heavy loss of -$62,302, marking -6.6% of its net worth.
-    Stock 2109: Slightly positive with a gain of $497, which is 0.29%.
-    Stock 2441: Similar to 8182, facing a loss of -$63,034, which is -6.58%.
-    Stock 5356: Performed well with a gain of $40,420, or 4.56%.
-    Stock 8150: Decreased by -$33,438, equating to -3.74%.
-    Stock 1582: Dropped by -$35,129, or -3.9%.
-    Total Unrealized PnL: -$210,553.
-    Realized Profit and Loss (PnL) Details:
-
-    Stock 6239: Had a significant realized loss of -$105,128, constituting -11.02% of its value.
-    Total Realized PnL: -$105,128.
-    Overall Financial Performance:
-
-    Total PnL: -$315,681.
-    Return on Investment (ROI) of Algorithm: -3.42%.
-    ROI of All Funds: -3.48%.
-    Remaining Cash: $1,007,206.
-    Net Worth: $9,066,233.
-
-    Summary
-    Today's trading reflected a challenging market environment with significant losses in several stocks. Although some gains were noted, the overall financial performance resulted in a negative ROI for both the algorithm and the overall funds. Moving forward, a reassessment of the current investment strategy and risk management practices might be necessary to mitigate further losses and enhance returns.
     """
 
     prompt = f"Here is the template {template}, Please generate today\'s trading report for the investor on the data: {message}"
@@ -624,10 +553,8 @@ def generate_song_from_prompt(message):
 
 
 if __name__ == '__main__':
-    stream = open("Spotify/Spotify.yaml")
-    spotify_details = yaml.safe_load(stream)
-    auth_manager = SpotifyClientCredentials(client_id=spotify_details['Client_id'],
-                                            client_secret=spotify_details['client_secret'])
+    auth_manager = SpotifyClientCredentials(client_id=client_id,
+                                            client_secret=client_secret)
     sp = spotipy.client.Spotify(auth_manager=auth_manager)
     # search_message = generate_song_from_prompt()
     result = sp.search("Mayday - OAOA")["tracks"]["items"][0]["uri"].split(':')[2]
