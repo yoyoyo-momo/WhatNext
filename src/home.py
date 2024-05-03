@@ -13,14 +13,15 @@ def home():
     mood = st.text_input("Your Current Mood:", "Happy")
     genre = st.text_input("Genre:", "Pop")
     requirement = st.text_input("Specific Requirements:", "I love pop music.")
+    st.button('Get Song Recommendations Through Prompt')
     data = {"age":age, "location":location, "mood":mood, "genre":genre, "requirement":requirement}
     with open('data.json', 'w') as file:
         json.dump(data, file)    
 
-    st.subheader('3. Playlist Recommendation')
-    st.text_input('Enter your Playlist URL here:')
-    st.button('Get playlist Recommendations')
+    st.subheader('Playlist Recommendation')
+    st.text_input('Enter your Playlist URL here:')  
+    st.button('Get Playlist Recommendations')
 
-    st.subheader('4. Song Recommendation')
+    st.subheader('Song Recommendation')
     st.text_input('Enter your Song URL here:')
-    st.button('Get song Recommendations')
+    st.button('Get Song Recommendations')
