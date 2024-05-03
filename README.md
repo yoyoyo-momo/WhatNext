@@ -1,4 +1,5 @@
-# Streamlit
+# WHATNEXT
+WHATNEXT is a system that use LLM and IR techniques to recommends playlists to users.
 
 
 ## Dataset download
