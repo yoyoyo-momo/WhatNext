@@ -1,34 +1,22 @@
 import streamlit as st
 from recommendations import song_recommendations, playlist_recommendations
+import json
+
 
 def home():
     st.title('WHATNEXT')
     st.header('3 ways to get recommendations:')
 
     st.subheader(':books: **Prompt Recommendation**')
-    prompt_options = st.multiselect(
-        "Please describe your feeling or feature you want in the song:",
-        ["Happy", "Sorrow", "Hype", "Blue"])
     
-    prompt_text = ""
-    if prompt_options:
-        prompt_text = "Give me some music that makes me feel "
-    for i in prompt_options:
-        prompt_text += i + " "
-
-    st.text('In put your prompt here, and we will recommend songs for you!')
-    text_area = st.text_area('Enter your prompt here:', 
-                             prompt_text)
-    st.button('Get Prompt Recommendations')
-
-    # st.subheader('2. Feature Recommendation')
-    # danceability = st.slider('Danceability', min_value=0.0, max_value=1.0, value=0.5)
-    # energy = st.slider('Energy', min_value=0.0, max_value=1.0, value=0.5)
-    # valence = st.slider('Valence', min_value=0.0, max_value=1.0, value=0.5)
-    # mode = st.slider('Mode', min_value=0.0, max_value=1.0, value=0.5)
-    # st.button('Get Feature Recommendations')
-
-    
+    age = st.slider("Your Age:", min_value=0, max_value=100, value=25)
+    location = st.text_input("Location:", "Gym")
+    mood = st.text_input("Your Current Mood:", "Happy")
+    genre = st.text_input("Genre:", "Pop")
+    requirement = st.text_input("Specific Requirements:", "I love pop music.")
+    data = {"age":age, "location":location, "mood":mood, "genre":genre, "requirement":requirement}
+    with open('data.json', 'w') as file:
+        json.dump(data, file)    
 
     st.subheader(':notes: **Playlist Recommendation**')
     st.session_state.playlist_url =  st.text_input('Enter your Playlist URL here:')
