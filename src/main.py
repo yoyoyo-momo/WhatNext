@@ -2,7 +2,7 @@ import streamlit as st
 from streamlit_option_menu import option_menu
 from home import home
 from about import about
-
+from recommendations import recommendations
 
 # left_column, right_column = st.columns(2)
 # # You can use a column just like st.sidebar:
@@ -26,6 +26,8 @@ def main():
     menu()
     if st.session_state.page == "Home":
         home()
+    elif st.session_state.page == "Recommendations":
+        recommendations()
     elif st.session_state.page == "About":
         about()
 
