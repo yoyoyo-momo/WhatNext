@@ -557,6 +557,5 @@ if __name__ == '__main__':
                                             client_secret=client_secret)
     sp = spotipy.client.Spotify(auth_manager=auth_manager)
     # search_message = generate_song_from_prompt()
-    result = sp.search("Mayday - OAOA")["tracks"]["items"][0]["uri"].split(':')[2]
-    song_model(url="https://open.spotify.com/track/" + result, model="Model 1")
-
+    # result = sp.search("Mayday - OAOA")["tracks"]["items"][0]["uri"].split(':')[2]
+    song_model(url="https://open.spotify.com/track/" + "2sr6TTgu2YbQVN0D4qm5H5", model="Spotify Model")
