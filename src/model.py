@@ -540,7 +540,7 @@ def generate_song_from_prompt():
 
     print(prompt)
 
-    completion = openai.ChatCompletion.create(
+    completion = openai.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
             {
