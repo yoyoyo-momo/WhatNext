@@ -9,6 +9,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from spotipy.oauth2 import SpotifyClientCredentials
 from dotenv import load_dotenv
 import openai
+import json
 
 load_dotenv()
 openai_api_secret = os.getenv("OPENAI_API_SECRET")
@@ -531,15 +532,13 @@ def update_dataset():
     df.to_csv('Data/streamlit.csv', index=False)
     return (len(df) - cur)
 
-def generate_song_from_prompt(message):
+def generate_song_from_prompt():
     openai.api_key = openai_api_secret
-    template = """
+    with open('data.json', 'r') as f:
+        user_scenario =  json.load(f)
+    prompt = f"Please recommend a song according to the following scenario. {user_scenario}. Please only output the name of the song."
 
-    """
-
-    prompt = f"Here is the template {template}, Please generate today\'s trading report for the investor on the data: {message}"
-
-    completion = openai.chat.completions.create(
+    completion = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[
             {
@@ -556,6 +555,7 @@ if __name__ == '__main__':
     auth_manager = SpotifyClientCredentials(client_id=client_id,
                                             client_secret=client_secret)
     sp = spotipy.client.Spotify(auth_manager=auth_manager)
-    # search_message = generate_song_from_prompt()
-    # result = sp.search("Mayday - OAOA")["tracks"]["items"][0]["uri"].split(':')[2]
-    song_model(url="https://open.spotify.com/track/" + "2sr6TTgu2YbQVN0D4qm5H5", model="Spotify Model")
+    search_message = generate_song_from_prompt()
+    result = sp.search(search_message)["tracks"]["items"][0]["uri"].split(':')[2]
+    song_model(url="https://open.spotify.com/track/" + result, model="Model 1")
+
