@@ -11,9 +11,9 @@ from dotenv import load_dotenv
 import openai
 import json
 
-load_dotenv()
+# load_dotenv()
 # openai_api_secret = os.getenv("OPENAI_API_SECRET")
-# openai_api_secret = os.getenv("OPENAI_API_SECRET")
+# client_id = os.getenv("CLIENT_ID")
 # client_secret = os.getenv("CLIENT_SECRET")
 openai_api_secret = st.secrets["OPENAI_API_SECRET"]
 client_id = st.secrets["CLIENT_ID"]
