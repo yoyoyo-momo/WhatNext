@@ -534,9 +534,11 @@ def update_dataset():
 
 def generate_song_from_prompt():
     openai.api_key = openai_api_secret
-    with open('data.json', 'r') as f:
-        user_scenario =  json.load(f)
+
+    user_scenario = st.session_state.input_text
     prompt = f"Please recommend a song according to the following scenario. {user_scenario}. Please only output the name of the song."
+
+    print(prompt)
 
     completion = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
@@ -550,6 +552,13 @@ def generate_song_from_prompt():
     print(completion.choices[0].message.content)
     return completion.choices[0].message.content
 
+def prompt_model():
+    auth_manager = SpotifyClientCredentials(client_id=client_id,
+                                            client_secret=client_secret)
+    sp = spotipy.client.Spotify(auth_manager=auth_manager)
+    search_message = generate_song_from_prompt()
+    result = sp.search(search_message)["tracks"]["items"][0]["uri"].split(':')[2]
+    return song_model(url="https://open.spotify.com/track/" + result, model="Spotify Model")
 
 if __name__ == '__main__':
     auth_manager = SpotifyClientCredentials(client_id=client_id,
@@ -558,4 +567,3 @@ if __name__ == '__main__':
     search_message = generate_song_from_prompt()
     result = sp.search(search_message)["tracks"]["items"][0]["uri"].split(':')[2]
     song_model(url="https://open.spotify.com/track/" + result, model="Model 1")
-
